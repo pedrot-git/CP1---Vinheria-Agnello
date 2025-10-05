@@ -9,7 +9,7 @@ O projeto utiliza um sensor LDR para detectar a luz ambiente, realiza calibra√ß√
 ## Circuito
 
 <p align="center">
-  <img src="vinheria_agnello/imgs/image_circuit.png" width="600" alt="Circuito montado no Tinkercard">
+  <img src="vinheria_arduino/imgs/imagem_circuito.png" width="600" alt="Circuito montado no Tinkercard">
 </p>
 
 ---
