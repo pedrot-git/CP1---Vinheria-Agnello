@@ -1,8 +1,8 @@
-# Vinheria Agnello – Monitoramento de Luminosidade com Arduino
+# Descrição
 
-Projeto desenvolvido como parte do desafio acadêmico proposto pela FIAP, com base no cenário fictício da empresa **Vinheria Agnello**. Este sistema embarcado tem como objetivo monitorar a luminosidade do ambiente, garantindo que os vinhos sejam armazenados sob condições ideais de conservação.
+Este projeto tem como objetivo monitorar a luminosidade de um ambiente utilizando um **sensor LDR (fotoresistor)**, indicando a intensidade da luz com **LEDs de sinalização** (verde, amarelo e vermelho) e acionando um **buzzer** quando a luminosidade ultrapassa o limite seguro. O projeto também conta com um **display LCD 16x2** que exibe a porcentagem de luz em tempo real e mensagens para guiar a calibração.
 
-O projeto utiliza um sensor LDR para detectar a luz ambiente, realiza calibração dinâmica, apresenta o status via display LCD e aciona alertas visuais (LEDs) e sonoros (buzzer) conforme o nível de luminosidade.
+O diferencial desta versão é que a **calibração é feita manualmente pelo usuário através de um botão**, tornando o sistema mais confiável e ajustável ao ambiente específico, além de incluir **suavização da leitura do LDR**, evitando variações bruscas e falsas leituras.
 
 ---
 
@@ -14,33 +14,33 @@ O projeto utiliza um sensor LDR para detectar a luz ambiente, realiza calibraç�
 
 ---
 
-## Funcionalidades
+## 📝 Funcionalidades
 
-* Animação de boas-vindas com o logo da Vinheria no LCD
-* Calibração automática da luminosidade mínima e máxima
-* Conversão das leituras do LDR em porcentagem (0%–100%) usando `map()`
-* Sinalização visual com 3 LEDs:
+1. **Boas-vindas animadas no LCD** com efeito de digitação.
+2. **Calibração manual do LDR pelo botão**:
 
-  * Verde → ambiente ideal
-  * Amarelo → nível de alerta
-  * Vermelho + buzzer → luminosidade excessiva
-* Exibição constante da porcentagem de luz atual no LCD
-* Alerta sonoro (buzzer) de 3 segundos caso a luminosidade permaneça alta
+   * O usuário pressiona o botão para registrar a **luz mínima** do ambiente.
+   * Depois pressiona novamente para registrar a **luz máxima**.
+3. **Leitura suavizada do sensor**, evitando variações bruscas.
+4. **Exibição da porcentagem de luminosidade no LCD**.
+5. **LEDs indicativos**:
+
+   * Verde → luz ideal (0-40%)
+   * Amarelo → alerta (41-70%)
+   * Vermelho → luz excessiva (>70%) e acionamento do buzzer.
 
 ---
 
-## Componentes Utilizados
+## ⚙️ Componentes Utilizados
 
-| Componente           | Quantidade | Descrição                            |
-| -------------------- | ---------- | ------------------------------------ |
-| Arduino Uno          | 1x         | Microcontrolador principal           |
-| Sensor LDR           | 1x         | Mede a intensidade de luz ambiente   |
-| Display LCD 16x2     | 1x         | Exibe mensagens e leituras           |
-| LEDs (3 cores)       | 3x         | Indicam os níveis de luminosidade    |
-| Buzzer               | 1x         | Emite alerta sonoro em luz excessiva |
-| Resistores 220Ω      | 3x         | Limitam corrente dos LEDs            |
-| Resistor 10kΩ        | 1x         | Divisor de tensão com o LDR          |
-| Protoboard e Jumpers | Diversos   | Montagem e conexões do circuito      |
+* Arduino Uno (ou compatível)
+* Sensor LDR (Fotoresistor)
+* 1 x Buzzer
+* 3 x LED (Verde, Amarelo, Vermelho)
+* 1 x Resistor para cada LED (220Ω – 330Ω)
+* 1 x Botão físico para calibração
+* Display LCD 16x2
+* Jumpers e protoboard
 
 ---
 
@@ -63,46 +63,58 @@ vinheria_agnello_versao1/
 2. **Monte o circuito** conforme o diagrama disponível em `imgs/image_circuit.png`
 3. **Carregue o código** presente no arquivo `vinheria_agnello.ino`
 4. **Alimente o circuito** com 5V e aguarde a mensagem de boas-vindas no LCD.
-5. O sistema iniciará automaticamente o processo de calibração:
+5. Pressione o **botão de calibração**:
 
-   * Cubra o sensor durante os primeiros 3 segundos (mínimo).
-   * Ilumine o sensor nos 3 segundos seguintes (máximo).
-6. Após calibrar, o sistema exibirá a porcentagem de luminosidade continuamente.
+   * Primeiro, registre a **luz mínima** cobrindo ou reduzindo a luz sobre o sensor.
+   * Depois, registre a **luz máxima** iluminando bem o sensor.
+4. Após a calibração, o sistema exibirá a porcentagem de luz e acionará os LEDs e buzzer conforme a intensidade.
 
 ---
 
-## Lógica do Sistema
+## Esquema de Montagem
 
-### Etapa 1 – Boas-vindas
+* **LCD:**
 
-* O LCD exibe “Vinheria Agnello” por 2 segundos.
-* Mostra o logo personalizado da taça de vinho usando caracteres criados via `lcd.createChar()`.
+  * GND → GND
+  * VCC → 5V
+  * RS → Pino 12
+  * E → Pino 11
+  * D4 → Pino 10
+  * D5 → Pino 5
+  * D6 → Pino 4
+  * D7 → Pino 3
+  * LED+ → 5V com resistor
+  * LED- → GND
 
-### Etapa 2 – Calibração Automática
+* **LEDs:**
 
-* Durante 3 segundos, o Arduino lê continuamente o valor mínimo (sensor coberto).
-* Em seguida, mede o valor máximo (sensor iluminado).
-* Usa a função `map()` para converter as leituras analógicas (0–1023) em 0% a 100%.
-* Define margens de segurança (+15 e -15) para evitar erros de sensibilidade.
+  * Verde → Pino 8
+  * Amarelo → Pino 9
+  * Vermelho → Pino 6
 
-### Etapa 3 – Monitoramento Contínuo
+* **Buzzer:**
 
-* O Arduino faz 5 leituras consecutivas do LDR e calcula a média.
-* Exibe a porcentagem de luz no LCD.
-* Avalia o nível de luminosidade e atua conforme:
+  * Pino → 13
+  * GND → GND
 
-  * ≤ 40% → LED verde aceso (OK).
-  * 41% a 70% → LED amarelo aceso (alerta).
-  * > 70% → LED vermelho + buzzer ativo por 3 segundos.
+* **Botão de calibração:**
 
-Durante o alerta, o LCD exibe mensagens de aviso:
+  * Pino → 2
+  * GND → GND
 
-```
-ALERTA! Luz
-Excessiva!
-```
+* **LDR:**
 
-Após o tempo de alarme, o sistema retorna ao modo de leitura.
+  * Um terminal → A0 (analógico)
+  * Outro terminal → GND com resistor pull-up se necessário
+
+---
+
+## ⚡ Lógica do Código
+
+* O código lê continuamente o valor do LDR e aplica uma **suavização exponencial**.
+* Converte a leitura para uma **porcentagem de luz** com base nos limites calibrados.
+* Atualiza o LCD com a porcentagem e indica o status usando LEDs e buzzer.
+* A calibração garante que o sistema funcione corretamente mesmo em ambientes com luminosidade diferente.
 
 ---
 
@@ -131,5 +143,5 @@ Após o tempo de alarme, o sistema retorna ao modo de leitura.
 | Pedro Sales     | Desenvolvimento |
 | David Gama      | Desenvolvimento |
 
-
 ---
+
